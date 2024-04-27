@@ -3,33 +3,36 @@ name: Scheduler
 on:
     push:
         branches:
-        - master
+            - master
+
     schedule:
-        - cron: '*/5 * * * *'
+        - cron: '0 * * * *'
 
 jobs:
-    auto_commit:
+    scheduler:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3      
-                with:
-                persist-credentials: false
-                fetch-depth: 0
+            - name: DEBUG
+              run: echo "::debug::Ref = ${{github.ref}}"
+            - uses: actions/checkout@v3
+              with:
+                  persist-credentials: false
+                  fetch-depth: 0
 
-            - name: Change file
-                run: |
-                    d=`date '+%Y-%m-%dT%H:%M:%SZ'`
-                    echo $d > TIME_COMMIT
+            - name: Modify last update
+              run: |
+                  d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+                  echo $d > TIME_COMMIT
 
-            - name: Crate a commit
-                run: |
-                    git config --local user.email "firmnardians@gmail.com"
-                    git config --local user.name "firmnardians"
-                    git add .
-                    git commit -m "Auto Commit"
+            - name: Commit changes
+              run: |
+                  git config --local user.email "firmnardians@gmail.com"
+                  git config --local user.name "firmnardians"
+                  git add -A
+                  git commit -m "chore: auto commit"
 
-            - name: Push to Github
-                uses: ad-m/github-push-action@v0.6.0
-                with:
-                directory: "."
-                github_token: ${{ secrets.GITHUB_TOKEN }}
+            - name: GitHub Push
+              uses: ad-m/github-push-action@v0.6.0
+              with:
+                  directory: '.'
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
