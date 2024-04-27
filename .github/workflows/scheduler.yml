@@ -11,8 +11,6 @@ jobs:
     auto_commit:
         runs-on: ubuntu-latest
         steps:
-            - name: Debug 
-                run: echo "::debug::Ref = ${{github.ref}}"
             - uses: actions/checkout@v3      
                 with:
                 persist-credentials: false
